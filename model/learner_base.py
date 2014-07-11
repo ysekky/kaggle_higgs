@@ -60,10 +60,26 @@ class LearnerBase(object):
         :param y: 訓練正解データ
         :param kwargs: その他パラメータ等
         """
+        #ここに固有の処理を書く
         pass
 
-    def predict(self, test_data):
-        y = self.learner.predict(self.__create_feature(test_data))
+    def __predict(self, x):
+        """
+        モデルの予測結果を返す．
+        :param x:
+        :return: list[]
+        """
+        #ここに固有の処理を書く
+        return []
+
+    def submit(self, test_data, feature_names):
+        """
+        モデルを使って提出用データを作成する
+        :param test_data:
+        :param feature_names:
+        :return:
+        """
+        y = self.__predict(self.__create_feature(test_data, feature_names))
         test_data['Class'] = self.__decode_training_class(y)
         self.__create_submit_data(test_data)
 
