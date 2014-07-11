@@ -65,12 +65,12 @@ class LearnerBase(object):
 
     def __predict(self, x):
         """
-        モデルの予測結果を返す．
+        モデルの予測結果とorderを返す．
         :param x:
-        :return: list[]
+        :return: list, list
         """
         #ここに固有の処理を書く
-        return []
+        return [], []
 
     def submit(self, test_data, feature_names):
         """
@@ -79,8 +79,9 @@ class LearnerBase(object):
         :param feature_names:
         :return:
         """
-        y = self.__predict(self.__create_feature(test_data, feature_names))
+        y, rank_order = self.__predict(self.__create_feature(test_data, feature_names))
         test_data['Class'] = self.__decode_training_class(y)
+        test_data['RankOrder'] = pandas.Series(rank_order)
         self.__create_submit_data(test_data)
 
     @staticmethod
@@ -92,7 +93,6 @@ class LearnerBase(object):
         :return:
         """
         #1からはじまるRankOrderを付与する必要がある．
-        test_data['RankOrder'] = pandas.Series(range(1, len(test_data)+1))
         output_filename = "{}.{}".format(CONFIG["output_data"], int(time.time()))
         test_data.to_csv(output_filename, columns=["EventId", "RankOrder", "Class"], index=False)
 
