@@ -1,0 +1,3 @@
+training_data: filepath
+test_data: filepath
+output_data: filepath
