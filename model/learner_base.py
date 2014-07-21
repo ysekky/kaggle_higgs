@@ -9,7 +9,7 @@ import pandas
 import time
 
 
-CONFIG = yaml.load(os.path.join(os.path.dirname(__file__), '../config.yml'))
+CONFIG = yaml.load(open(os.path.join(os.path.dirname(__file__), '../config.yml')))
 
 
 class LearnerBase(object):
@@ -72,20 +72,22 @@ class LearnerBase(object):
         #ここに固有の処理を書く
         return [], []
 
-    def submit(self, test_data, feature_names):
+    def predict(self, test_data, feature_names):
         """
         モデルを使って提出用データを作成する
         :param test_data:
         :param feature_names:
         :return:
         """
-        y, rank_order = self.__predict(self.__create_feature(test_data, feature_names))
-        test_data['Class'] = self.__decode_training_class(y)
+        #固有の処理を書く
+
+    def submit(self, test_data, y, rank_order):
+        test_data['Class'] = self.decode_training_class(y)
         test_data['RankOrder'] = pandas.Series(rank_order)
-        self.__create_submit_data(test_data)
+        self.create_submit_data(test_data)
 
     @staticmethod
-    def __create_submit_data(test_data):
+    def create_submit_data(test_data):
         """
         サブミット用のデータを出力.
         ファイル名はconfigでの指定にタイムスタンプをつける
@@ -99,7 +101,7 @@ class LearnerBase(object):
 
 
     @staticmethod
-    def __create_feature(input_data, feature_names):
+    def create_feature(input_data, feature_names):
         """
         DataFrameから用いるカラムを選択し，学習器に与える形にして返す.
 
@@ -107,10 +109,10 @@ class LearnerBase(object):
         :param feature_names: list[str]: 訓練データで用いるカラム名をリストで定義
         :return: list[list]
         """
-        return input_data[[feature_names]]
+        return input_data[feature_names]
 
     @staticmethod
-    def __encode_training_class(training_data):
+    def encode_training_class(training_data):
         """
         labelを0,1の形のリストにして返す．
         sを0, bを1にする
@@ -118,9 +120,9 @@ class LearnerBase(object):
         :param training_data: pandas.DataFrame: 訓練データ
         :return: list[int]
         """
-        return training_data["label"].replace(['s', 'b'], [0, 1])
+        return training_data["Label"].replace(['s', 'b'], [0, 1])
 
     @staticmethod
-    def __decode_training_class(predict_result):
+    def decode_training_class(predict_result):
         return pandas.Series(predict_result).replace([0, 1], ['s', 'b'])
 
